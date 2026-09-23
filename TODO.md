@@ -33,3 +33,30 @@
   el mapa y mostrar el overlay con tab. Cuando doy enter e intento avanzar una
   iteración con espacio despues de que desaparece el guardia entonces se reproduce
   el error. Este es un posible edge case para ser testeado.
+
+## Estados de juego (victoria / derrota) y congelado del camino
+
+- **Contexto:** `game/app.py` (`App.update`) no tiene estados de juego: tras
+  ser alcanzado por el guardia el jugador puede seguir moviéndose y el guardia
+  sigue replanificando (`Guard.replan` ante cada cambio de celda), por lo que
+  el overlay recalcula y repinta el camino indefinidamente. Los objetivos del
+  mapa (`MapData.goals`, dibujados como estrella por `Renderer.draw_map`)
+  tampoco detienen la partida al alcanzarlos.
+- **Problema:** no hay condición de fin: ni la victoria (llegar al objetivo sin
+  ser alcanzado) ni la derrota (guardia alcanza al jugador) detienen el juego.
+- **Propuesta:**
+  1. Crear los estados del juego (p. ej. `PLAYING` / `WON` / `LOST`) con sus
+     transiciones en `App`: derrota cuando guardia y jugador comparten celda,
+     victoria cuando el jugador pisa un `goal` sin haber sido alcanzado.
+  2. Al entrar en `WON` o `LOST`: bloquear el movimiento del jugador y del
+     guardia (y el replanificado/stepping), de modo que el camino quede
+     congelado.
+  3. En derrota (con overlay activo): mostrar el camino hasta el punto donde se
+     alcanzó al jugador. En victoria: dejar de pintar el camino.
+  4. Opcional: mostrar leyenda "ganaste" / "perdiste" según el estado.
+- **Criterio de aceptación:** tras victoria o derrota las entidades no se
+  mueven, el camino ya no se recalcula, y el overlay (si está activo) refleja
+  lo descrito en el punto 3.
+- **Restricción:** los estados deben funcionar tanto con el debug/overlay
+  activo como sin él (el fin del juego no depende del overlay; solo lo del
+  dibujado del camino aplica al debug).

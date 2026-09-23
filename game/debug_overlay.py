@@ -68,7 +68,7 @@ def draw_search_state(
         pygame.draw.rect(
             screen, _CURRENT, (x, y, camera.tile_size, camera.tile_size), 2
         )
-    if state.path:
+    if state.path and len(state.path) >= 2:
         pygame.draw.lines(
             screen, _PATH, False, [_center(camera, c) for c in state.path], 4
         )
