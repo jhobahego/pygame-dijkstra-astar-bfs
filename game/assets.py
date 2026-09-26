@@ -40,52 +40,33 @@ _GUARD_SHEET = "sprites/guard-spritesheet.jpeg"
 _TARGET_SHEET = "sprites/objective-sprites.png"
 _TILES_SHEET = "tiles/spritesheet-tileset.jpeg"
 
-#: Tight sprite boxes per direction (row) and walk frame (column).
-#: Measured on the 1024x1024 sheets; captions and labels excluded.
+#: Uniform 4x4 grids on the 500x500 removebg sheets (125 px cells, real
+#: alpha). Rows are down / up / left / right from top to bottom.
 PLAYER_FRAMES: dict[str, list[Rect]] = {
-    "down": [(152, 92, 116, 168), (364, 92, 122, 168), (592, 92, 120, 168), (812, 92, 120, 168)],
-    "up": [(152, 322, 116, 170), (364, 322, 124, 170), (592, 322, 120, 170), (810, 322, 124, 170)],
-    "left": [(152, 566, 176, 166), (372, 566, 178, 166), (596, 566, 106, 166), (766, 566, 160, 166)],
-    "right": [(154, 802, 174, 168), (372, 802, 178, 168), (602, 802, 106, 168), (766, 802, 160, 168)],
+    direction: _cells(0, 125 * row, 125, 125, 4)
+    for row, direction in enumerate(DIRECTIONS)
 }
 
-#: Full grid cells; the guard sheet carries no captions inside cells.
+#: Same 4x4 grid layout as the player sheet.
 GUARD_FRAMES: dict[str, list[Rect]] = {
-    "down": _cells(150, 94, 200, 202, 4),
-    "up": _cells(150, 310, 200, 196, 4),
-    "left": _cells(150, 522, 200, 204, 4),
-    "right": _cells(150, 742, 200, 204, 4),
-}
-# Guard columns share the sheet grid lines: fix exact widths.
-GUARD_FRAMES = {
-    direction: [
-        (150, y, 200, h),
-        (362, y, 192, h),
-        (566, y, 188, h),
-        (766, y, 200, h),
-    ]
-    for direction, (_, y, _, h) in [
-        ("down", GUARD_FRAMES["down"][0]),
-        ("up", GUARD_FRAMES["up"][0]),
-        ("left", GUARD_FRAMES["left"][0]),
-        ("right", GUARD_FRAMES["right"][0]),
-    ]
+    direction: _cells(0, 125 * row, 125, 125, 4)
+    for row, direction in enumerate(DIRECTIONS)
 }
 
-#: Objective cells (star, red star, diamond, coin) on the 1107x293 sheet.
+#: Objective cells (star, red star, diamond, coin) on the 1000x250 sheet.
 TARGET_FRAMES: list[Rect] = [
-    (18, 19, 263, 258),
-    (294, 19, 263, 258),
-    (570, 19, 262, 258),
-    (845, 19, 262, 258),
+    (0, 0, 250, 250),
+    (250, 0, 250, 250),
+    (500, 0, 250, 250),
+    (750, 0, 250, 250),
 ]
 
-#: Terrain textures as (sheet, rect); 2x2 block starting at (352, 48).
+#: Terrain textures as (sheet, rect); 2x2 quadrants of 512 px.
 TILE_RECTS: dict[str, Rect] = {
-    "floor": (352, 48, 352, 336),
-    "mud": (704, 48, 352, 336),
-    "water": (352, 384, 352, 384),
-    "wall": (704, 384, 352, 384),
+    "floor": (0, 0, 512, 512),
+    "mud": (512, 0, 512, 512),
+    "water": (0, 512, 512, 512),
+    "wall": (512, 512, 512, 512),
 }
 
 

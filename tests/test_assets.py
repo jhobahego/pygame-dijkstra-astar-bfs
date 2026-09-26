@@ -61,6 +61,25 @@ def test_entities_differ_from_each_other(loader: AssetLoader) -> None:
     assert len(set(blobs.values())) == 3
 
 
+def test_entity_corners_are_transparent(loader: AssetLoader) -> None:
+    """Removebg sheets carry real alpha: no gray box around entities."""
+    for who in ("player", "guard"):
+        for direction in DIRECTIONS:
+            for index in range(4):
+                surface = loader.frame(who, direction, index)
+                corners = [
+                    surface.get_at((0, 0)),
+                    surface.get_at((TILE_SIZE - 1, 0)),
+                    surface.get_at((0, TILE_SIZE - 1)),
+                    surface.get_at((TILE_SIZE - 1, TILE_SIZE - 1)),
+                ]
+                assert all(c.a == 0 for c in corners), (who, direction, index)
+    for index in range(4):
+        surface = loader.target_frame(index)
+        assert surface.get_at((0, 0)).a == 0
+        assert surface.get_at((TILE_SIZE - 1, TILE_SIZE - 1)).a == 0
+
+
 def test_walk_frames_are_32x32(loader: AssetLoader) -> None:
     for who in ("player", "guard"):
         for direction in DIRECTIONS:
