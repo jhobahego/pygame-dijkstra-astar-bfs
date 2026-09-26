@@ -8,10 +8,10 @@ Nothing is generated and nothing is downloaded at runtime.
 | File | Size | Content |
 |---|---|---|
 | `spritesheet-dijkstra-game-example.jpeg` | 1408x768 | Reference composite: tileset, player, guard and objective on one canvas |
-| `sprites/player-spritesheet.jpeg` | 1024x1024 | Player, 4 directions (down, up, left, right) x 4 walk frames |
-| `sprites/guard-spritesheet.jpeg` | 1024x1024 | Guard, 4 directions x 4 walk frames |
-| `sprites/objective-sprites.png` | 1107x293 | Objective: star, red star, diamond, coin (4 cells) |
-| `tiles/spritesheet-tileset.jpeg` | 1408x768 | Terrain 2x2: floor (`.`), mud (`~`), water (`w`), wall (`#`) |
+| `sprites/player-spritesheet.jpeg` | 500x500 | Player, 4 directions (down, up, left, right) x 4 walk frames, transparent background |
+| `sprites/guard-spritesheet.jpeg` | 500x500 | Guard, 4 directions x 4 walk frames, transparent background |
+| `sprites/objective-sprites.png` | 1000x250 | Objective: star, red star, diamond, coin (4 cells), transparent background |
+| `tiles/spritesheet-tileset.jpeg` | 1024x1024 | Terrain 2x2: floor (`.`), mud (`~`), water (`w`), wall (`#`), no captions |
 
 `assets/fonts/` holds local font files when the game needs them.
 
@@ -21,21 +21,17 @@ The loader (`game/assets.py`, `AssetLoader`) crops these regions and fits
 each one into a 32x32 px tile preserving aspect ratio (centered, transparent
 background, nearest-neighbor scaling):
 
-- **Player** (`player-spritesheet.jpeg`): tight sprite boxes per cell, e.g.
-  down `[(152, 92, 116, 168), (364, 92, 122, 168), ...]`. Rows are
-  down / up / left / right from top to bottom. Captions and direction labels
-  are excluded.
-- **Guard** (`guard-spritesheet.jpeg`): full grid cells, e.g. down row
-  `(150, 94, 200, 202)` with columns at x `150 / 362 / 566 / 766`.
-  The sheet carries no captions inside cells.
-- **Objective** (`objective-sprites.png`): cells `(18, 19, 263, 258)`,
-  `(294, 19, 263, 258)`, `(570, 19, 262, 258)`, `(845, 19, 262, 258)`.
-- **Tiles** (`tiles/spritesheet-tileset.jpeg`): 2x2 block from `(352, 48)`:
-  floor `(352, 48, 352, 336)`, mud `(704, 48, 352, 336)`,
-  water `(352, 384, 352, 384)`, wall `(704, 384, 352, 384)`.
+- **Player** (`player-spritesheet.jpeg`): uniform 4x4 grid of 125 px
+  cells. Rows are down / up / left / right from top to bottom.
+- **Guard** (`guard-spritesheet.jpeg`): same 4x4 grid of 125 px cells.
+- **Objective** (`objective-sprites.png`): cells `(0, 0, 250, 250)`,
+  `(250, 0, 250, 250)`, `(500, 0, 250, 250)`, `(750, 0, 250, 250)`.
+- **Tiles** (`tiles/spritesheet-tileset.jpeg`): 2x2 quadrants of 512 px:
+  floor `(0, 0, 512, 512)`, mud `(512, 0, 512, 512)`,
+  water `(0, 512, 512, 512)`, wall `(512, 512, 512, 512)`.
 
-Entity surfaces keep the sheet background (JPEG sheets are opaque); only the
-objective PNG carries alpha.
+Entity and objective surfaces carry real alpha (transparent background);
+only the terrain JPEG is opaque (tiles need no transparency).
 
 ## Usage
 
