@@ -71,6 +71,21 @@ class Guard(Entity):
             self._route = list(final.path[1:])
         self._tracked_player = player_cell
 
+    def update_visual(self, dt: float) -> None:
+        """Advance interpolation and walk animation without replanning.
+
+        Used by ``App`` once the game is over (``WON``/``LOST``) so the
+        sprites settle on their final cells while the search stays
+        frozen: no replan, no route stepping.
+        """
+        super().update(dt)
+        if self.is_moving:
+            self._anim += dt
+            self.frame = int(self._anim / FRAME_DURATION) % 4
+        else:
+            self._anim = 0.0
+            self.frame = 0
+
     def update_guard(
         self, dt: float, grid: Grid, player_cell: Coord, camera: Camera
     ) -> None:
@@ -82,10 +97,4 @@ class Guard(Entity):
             delta: Coord = (nxt[0] - self.cell[0], nxt[1] - self.cell[1])
             self.direction = DIRECTION_BY_STEP.get(delta, self.direction)
             self.move_to(nxt, camera.cell_center(nxt), MOVE_DURATION)
-        super().update(dt)
-        if self.is_moving:
-            self._anim += dt
-            self.frame = int(self._anim / FRAME_DURATION) % 4
-        else:
-            self._anim = 0.0
-            self.frame = 0
+        self.update_visual(dt)
